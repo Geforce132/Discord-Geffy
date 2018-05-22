@@ -3,6 +3,7 @@ package net.geforce.geffy.handlers;
 import net.geforce.geffy.commands.Command;
 import net.geforce.geffy.commands.CommandAdmin;
 import net.geforce.geffy.commands.CommandGiveCookie;
+import net.geforce.geffy.commands.CommandHelp;
 import net.geforce.geffy.commands.CommandRate;
 import net.geforce.geffy.commands.CommandTweet;
 import net.geforce.geffy.main.Geffy;
@@ -24,7 +25,7 @@ public class EventHandler {
 	/**
 	 * A simple array containing instances of the commands he should check for and execute.
 	 */
-	private Command[] commands = new Command[]{new CommandGiveCookie(), new CommandRate(), new CommandTweet(), new CommandAdmin()};
+	private Command[] commands = new Command[]{new CommandGiveCookie(), new CommandRate(), new CommandTweet(), new CommandAdmin(), new CommandHelp()};
 	
 	/**
 	 * Handles the event of a Discord user posting a message to a channel.
@@ -35,7 +36,6 @@ public class EventHandler {
 	public void onMessageReceived(MessageReceivedEvent event)
 	{		
 		String[] message = event.getMessage().getContent().split(" ");
-		if(!event.getChannel().isPrivate()) Geffy.getReferences().setLastMessage(event.getAuthor(), event.getMessage());
 
 		if(!event.getMessage().getContent().startsWith(References.COMMAND_PREFIX))
 		{
@@ -77,6 +77,8 @@ public class EventHandler {
 			e.printStackTrace();
 			return;
 		}
+		
+		if(!event.getChannel().isPrivate()) Geffy.getReferences().setLastMessage(event.getAuthor(), event.getMessage());
 	}
 	
 	@EventSubscriber
