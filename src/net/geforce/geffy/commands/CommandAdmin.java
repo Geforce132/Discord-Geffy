@@ -1,5 +1,6 @@
 package net.geforce.geffy.commands;
 
+import net.geforce.geffy.commands.sa.SAResourceManager;
 import net.geforce.geffy.main.Geffy;
 import net.geforce.geffy.main.Utils;
 import net.geforce.geffy.misc.Passwords;
@@ -15,6 +16,9 @@ public class CommandAdmin extends Command<MessageReceivedEvent> {
 		
 		if(command.matches("playingtext"))
 			Geffy.getClient().changePlayingText(Utils.arrayToString(args, 1));
+		
+		if(command.matches("resetsasearches"))
+			SAResourceManager.SEARCH_QUERIES_REMAINING = 100;
 	}
 	
 	@Override

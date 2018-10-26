@@ -5,6 +5,7 @@ import net.geforce.geffy.commands.CommandAdmin;
 import net.geforce.geffy.commands.CommandGiveCookie;
 import net.geforce.geffy.commands.CommandHelp;
 import net.geforce.geffy.commands.CommandRate;
+import net.geforce.geffy.commands.CommandSteamAnalyst;
 import net.geforce.geffy.commands.CommandTweet;
 import net.geforce.geffy.main.Geffy;
 import net.geforce.geffy.main.Utils;
@@ -25,7 +26,7 @@ public class EventHandler {
 	/**
 	 * A simple array containing instances of the commands he should check for and execute.
 	 */
-	private Command[] commands = new Command[]{new CommandGiveCookie(), new CommandRate(), new CommandTweet(), new CommandAdmin(), new CommandHelp()};
+	private Command[] commands = new Command[]{new CommandGiveCookie(), new CommandRate(), new CommandTweet(), new CommandAdmin(), new CommandHelp(), new CommandSteamAnalyst()};
 	
 	/**
 	 * Handles the event of a Discord user posting a message to a channel.
