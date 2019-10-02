@@ -1,7 +1,8 @@
 package net.geforce.geffy.interactions;
 
-import sx.blah.discord.handle.obj.IChannel;
-import sx.blah.discord.handle.obj.IUser;
+import discord4j.core.object.entity.Channel;
+import discord4j.core.object.entity.User;
+import net.geforce.geffy.handlers.EventHandler;
 
 public abstract class Prompt {
 	
@@ -13,13 +14,13 @@ public abstract class Prompt {
 	/**
 	 * The user that has been prompted.
 	 */
-	private IUser userPrompted;
+	private User userPrompted;
 	
 	/**
 	 * The channel that the user has been prompted in (or the DM in the
 	 * case of a private conversation).
 	 */
-	private IChannel channelPromptedIn;
+	private Channel channelPromptedIn;
 	
 	/**
 	 * The {@link PromptType} of this prompt. Can either be MESSAGE or DM.
@@ -32,14 +33,14 @@ public abstract class Prompt {
 	 */
 	private String response;
 	
-	public Prompt(String message, IUser user)
+	public Prompt(String message, User user)
 	{
 		prompt = message;
 		userPrompted = user;
 		promptType = PromptType.DM;
 	}
 	
-	public Prompt(String message, IUser user, IChannel channel)
+	public Prompt(String message, User user, Channel channel)
 	{
 		prompt = message;
 		userPrompted = user;
@@ -66,7 +67,7 @@ public abstract class Prompt {
 	/**
 	 * @return The user that has been prompted.
 	 */
-	public IUser getPromptedUser()
+	public User getPromptedUser()
 	{
 		return userPrompted;
 	}
@@ -74,7 +75,7 @@ public abstract class Prompt {
 	/**
 	 * @return The channel that the user has been prompted in.
 	 */
-	public IChannel getChannel()
+	public Channel getChannel()
 	{
 		return channelPromptedIn;
 	}

@@ -1,36 +1,39 @@
 package net.geforce.geffy.commands;
 
+import discord4j.core.event.domain.message.MessageCreateEvent;
+import discord4j.core.object.entity.Message;
+import discord4j.core.object.entity.User;
+import discord4j.core.object.reaction.ReactionEmoji;
 import net.geforce.geffy.commands.twitter.StatusCodes;
 import net.geforce.geffy.commands.twitter.Tweet;
 import net.geforce.geffy.commands.twitter.TwitterManager;
 import net.geforce.geffy.main.Geffy;
 import net.geforce.geffy.main.Utils;
-import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IReaction;
 import sx.blah.discord.handle.obj.IUser;
 import twitter4j.Status;
 import twitter4j.TwitterException;
 
-public class CommandTweet extends Command<MessageReceivedEvent> {
+public class CommandTweet extends Command<MessageCreateEvent> {
 
 	@Override
-	public void execute(MessageReceivedEvent event, String[] args) throws Exception {		
+	public void execute(MessageCreateEvent event, String[] args) throws Exception {		
 		try
 		{
-			if(Geffy.getReferences().getTwitterInstanceForUser(event.getAuthor()) == null)
+			if(Geffy.getReferences().getTwitterInstanceForUser(event.getMessage().getAuthor().get()) == null)
 			{
-				TwitterManager.authenticateUser(event.getAuthor());
+				TwitterManager.authenticateUser(event.getMessage().getAuthor().get());
 			}
 			else
 			{
 				if(args.length <= 1)
 				{
-					Utils.sendMessage(event.getChannel(), "You must include a message for your tweet!");
+					Utils.sendMessage(event.getMessage().getChannel().block(), "You must include a message for your tweet!");
 					return;
 				}
 				
-				TwitterManager.sendTweet(event.getChannel(), event.getAuthor(), event.getMessage(), Utils.arrayToString(args));
+				TwitterManager.sendTweet(event.getMessage().getChannel().block(), event.getMessage().getAuthor().get(), event.getMessage(), Utils.arrayToString(args));
 			}
 		}
 		catch(TwitterException e) 
@@ -41,12 +44,12 @@ public class CommandTweet extends Command<MessageReceivedEvent> {
 	}
 
 	@Override
-	public void reactionAdded(IReaction reaction, IUser user, IChannel channel)
+	public void reactionAdded(ReactionEmoji reaction, User user, Message message)
 	{
-		String emoji = reaction.getEmoji().toString();
-		if(!emoji.matches("🔁") && !emoji.matches("❤") && !emoji.matches("🗑")) return;
+		String emoji = reaction.asCustomEmoji().get().getName();
+		if(!emoji.matches("ðŸ”�") && !emoji.matches("â�¤") && !emoji.matches("ðŸ—‘")) return;
 
-		Tweet potentialTweet = Geffy.getReferences().getTweetFromMessage(reaction.getMessage().getLongID());
+		Tweet potentialTweet = Geffy.getReferences().getTweetFromMessage(message.getId().asLong());
 		
 		try {
 			if(potentialTweet != null)
@@ -55,7 +58,7 @@ public class CommandTweet extends Command<MessageReceivedEvent> {
 				
 				if(Geffy.getReferences().getTwitterInstanceForUser(user) != null)
 				{
-					if(emoji.matches("🔁"))
+					if(emoji.matches("ðŸ”�"))
 					{
 						TwitterManager.retweetTweet(tweet, reaction.getMessage(), user);
 						Status updatedStatus = Geffy.getReferences().getTwitterInstanceForUser(user).getTwitterInstance().showStatus(tweet.getId());
@@ -63,7 +66,7 @@ public class CommandTweet extends Command<MessageReceivedEvent> {
 						Thread.sleep(100);	
 						reaction.getMessage().edit(reaction.getMessage().getContent(), TwitterManager.getFormattedEmbed(Geffy.getReferences().getTwitterInstanceForUser(potentialTweet.getAuthor()).getTwitterInstance(), updatedStatus).build());
 					}
-					else if(emoji.matches("❤"))
+					else if(emoji.matches("â�¤"))
 					{
 						TwitterManager.favoriteTweet(tweet, reaction.getMessage(), user);
 						Status updatedStatus = Geffy.getReferences().getTwitterInstanceForUser(potentialTweet.getAuthor()).getTwitterInstance().showStatus(tweet.getId());
@@ -71,7 +74,7 @@ public class CommandTweet extends Command<MessageReceivedEvent> {
 						Thread.sleep(100);	
 						reaction.getMessage().edit(reaction.getMessage().getContent(), TwitterManager.getFormattedEmbed(Geffy.getReferences().getTwitterInstanceForUser(potentialTweet.getAuthor()).getTwitterInstance(), updatedStatus).build());
 					}
-					else if(emoji.matches("🗑") && user.getLongID() == potentialTweet.getAuthor().getLongID())
+					else if(emoji.matches("ðŸ—‘") && user.getLongID() == potentialTweet.getAuthor().getLongID())
 					{
 						TwitterManager.deleteTweet(tweet, reaction.getMessage(), user);
 						reaction.getMessage().delete();
@@ -92,7 +95,7 @@ public class CommandTweet extends Command<MessageReceivedEvent> {
 	public void reactionRemoved(IReaction reaction, IUser user, IChannel channel)
 	{
 		String emoji = reaction.getEmoji().toString();
-		if(!emoji.matches("🔁") && !emoji.matches("❤") && !emoji.matches("🗑")) return;
+		if(!emoji.matches("ðŸ”�") && !emoji.matches("â�¤") && !emoji.matches("ðŸ—‘")) return;
 
 		Tweet potentialTweet = Geffy.getReferences().getTweetFromMessage(reaction.getMessage().getLongID());
 		
@@ -103,7 +106,7 @@ public class CommandTweet extends Command<MessageReceivedEvent> {
 				
 				if(Geffy.getReferences().getTwitterInstanceForUser(user) != null)
 				{
-					if(emoji.matches("🔁"))
+					if(emoji.matches("ðŸ”�"))
 					{
 						TwitterManager.unretweetTweet(reaction.getMessage(), user);
 						Status updatedStatus = Geffy.getReferences().getTwitterInstanceForUser(user).getTwitterInstance().showStatus(tweet.getId());
@@ -111,7 +114,7 @@ public class CommandTweet extends Command<MessageReceivedEvent> {
 						Thread.sleep(100);	
 						reaction.getMessage().edit(reaction.getMessage().getContent(), TwitterManager.getFormattedEmbed(Geffy.getReferences().getTwitterInstanceForUser(potentialTweet.getAuthor()).getTwitterInstance(), updatedStatus).build());
 					}
-					else if(emoji.matches("❤"))
+					else if(emoji.matches("â�¤"))
 					{
 						TwitterManager.unfavoriteTweet(tweet, reaction.getMessage(), user);
 						Status updatedStatus = Geffy.getReferences().getTwitterInstanceForUser(potentialTweet.getAuthor()).getTwitterInstance().showStatus(tweet.getId());

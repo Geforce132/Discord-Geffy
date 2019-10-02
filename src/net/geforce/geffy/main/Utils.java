@@ -12,10 +12,12 @@ import javax.imageio.ImageIO;
 
 import org.apache.commons.io.FilenameUtils;
 
+import discord4j.core.object.entity.Attachment;
+import discord4j.core.object.entity.Channel;
+import discord4j.core.object.entity.Message;
+import discord4j.core.object.entity.User;
 import sx.blah.discord.api.internal.json.objects.EmbedObject;
-import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IMessage;
-import sx.blah.discord.handle.obj.IMessage.Attachment;
 import sx.blah.discord.handle.obj.IUser;
 
 /**
@@ -32,7 +34,7 @@ public class Utils {
 	 * @param message The message itself.
 	 * @return An {@link IMessage} object of the sent message.
 	 */
-	public static IMessage sendMessage(IChannel channel, String message)
+	public static Message sendMessage(Channel channel, String message)
 	{
 		return channel.sendMessage(message);
 	}
@@ -44,7 +46,7 @@ public class Utils {
 	 * @param message The message itself.
 	 * @return An {@link IMessage} object of the sent message.
 	 */
-	public static IMessage sendMessage(IUser user, String message)
+	public static Message sendMessage(User user, String message)
 	{
 		return sendMessage(user.getOrCreatePMChannel(), message);
 	}
@@ -57,7 +59,7 @@ public class Utils {
 	 * @param embed The {@link EmbedObject} to attach to the message.
 	 * @return An {@link IMessage} object of the sent message.
 	 */
-	public static IMessage sendMessageWithEmbed(IChannel channel, String message, EmbedObject embed)
+	public static Message sendMessageWithEmbed(Channel channel, String message, EmbedObject embed)
 	{
 		return channel.sendMessage(message, embed);
 	}
@@ -70,7 +72,7 @@ public class Utils {
 	 * @param embed The {@link EmbedObject} to attach to the message.
 	 * @return An {@link IMessage} object of the sent message.
 	 */
-	public static IMessage sendMessageWithEmbed(IUser user, String message, EmbedObject embed)
+	public static Message sendMessageWithEmbed(User user, String message, EmbedObject embed)
 	{
 		return sendMessageWithEmbed(user.getOrCreatePMChannel(), message, embed);
 	}
@@ -82,9 +84,9 @@ public class Utils {
 	 * @param name The name of the user to search for.
 	 * @return The IUser instance of the user.
 	 */
-	public static IUser getUserByName(IChannel channel, String name)
+	public static User getUserByName(Channel channel, String name)
 	{
-		List<IUser> users = channel.getUsersHere();
+		List<User> users = channel.getUsersHere();
 		String tempName = name;
 		
 		if(tempName.startsWith("<@"))
@@ -93,15 +95,15 @@ public class Utils {
 		}
 
 
-		for(IUser user : users)
+		for(User user : users)
 		{
-			if(user.getName().matches(tempName))
+			if(user.getUsername().matches(tempName))
 			{
 				return user;
 			}
 			
 			try {
-				if(user.getLongID() == Long.parseLong(tempName))
+				if(user.getId().asLong() == Long.parseLong(tempName))
 					return user;
 			}
 			catch(NumberFormatException e) { }

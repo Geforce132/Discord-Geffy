@@ -2,23 +2,23 @@ package net.geforce.geffy.misc;
 
 import java.util.HashMap;
 
-import sx.blah.discord.handle.obj.IUser;
+import discord4j.core.object.entity.User;
 
 public class Scoreboard {
 	
-	private HashMap<IUser, Integer> userScores = new HashMap<IUser, Integer>();
+	private HashMap<User, Integer> userScores = new HashMap<User, Integer>();
 	
-	public int getScore(IUser user)
+	public int getScore(User user)
 	{
 		return userScores.get(user);
 	}
 	
-	public void addUser(IUser user)
+	public void addUser(User user)
 	{
 		userScores.put(user, 0);
 	}
 	
-	public void removeUser(IUser user)
+	public void removeUser(User user)
 	{
 		userScores.remove(user);
 	}

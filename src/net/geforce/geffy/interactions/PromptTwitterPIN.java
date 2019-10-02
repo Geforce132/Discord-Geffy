@@ -1,8 +1,8 @@
 package net.geforce.geffy.interactions;
 
+import discord4j.core.object.entity.User;
 import net.geforce.geffy.main.Geffy;
 import net.geforce.geffy.main.Utils;
-import sx.blah.discord.handle.obj.IUser;
 
 /**
  * An implementation of the {@link Prompt} class which takes a user's
@@ -12,7 +12,7 @@ import sx.blah.discord.handle.obj.IUser;
  */
 public class PromptTwitterPIN extends Prompt {
 	
-	public PromptTwitterPIN(String message, IUser user) {
+	public PromptTwitterPIN(String message, User user) {
 		super(message, user);
 	}
 

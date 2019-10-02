@@ -1,11 +1,14 @@
 package net.geforce.geffy.commands.twitter;
 
+import discord4j.core.object.entity.Attachment;
+import discord4j.core.object.entity.Channel;
+import discord4j.core.object.entity.Message;
+import discord4j.core.object.entity.User;
+import discord4j.core.object.reaction.ReactionEmoji;
 import net.geforce.geffy.interactions.PromptTwitterPIN;
 import net.geforce.geffy.main.Geffy;
 import net.geforce.geffy.main.Utils;
-import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IMessage;
-import sx.blah.discord.handle.obj.IUser;
 import sx.blah.discord.util.EmbedBuilder;
 import twitter4j.Status;
 import twitter4j.StatusUpdate;
@@ -33,10 +36,10 @@ public class TwitterManager {
 	 * @throws Exception Throws an exception if any problems occur during the posting process.
 	 */
 	@SuppressWarnings("deprecation")
-	public static Status sendTweet(IChannel channel, IUser user, IMessage discordMessage, String tweetMessage) throws Exception
+	public static Status sendTweet(Channel channel, User user, Message discordMessage, String tweetMessage) throws Exception
 	{
 		String tempMessage = tweetMessage;
-		IMessage uncheckedMessage = discordMessage;
+		Message uncheckedMessage = discordMessage;
 		
 		if(tweetMessage.matches("\\^"))
 		{
@@ -47,13 +50,13 @@ public class TwitterManager {
 				return null;
 			}
 			
-			if(uncheckedMessage.getContent().startsWith("~tweet "))
+			if(uncheckedMessage.getContent().get().startsWith("~tweet "))
 			{
-				tempMessage = uncheckedMessage.getContent().replace("~tweet ", "");
+				tempMessage = uncheckedMessage.getContent().get().replace("~tweet ", "");
 			}
 			else
 			{
-				tempMessage = uncheckedMessage.getContent();	
+				tempMessage = uncheckedMessage.getContent().get();	
 			}			
 		}
 		
@@ -63,9 +66,11 @@ public class TwitterManager {
 
 		long[] imageIDs = new long[discordMessage.getAttachments().size()];
 		
+		Attachment[] attachments = (Attachment[]) discordMessage.getAttachments().toArray();
+
 		for(int i = 0; i < imageIDs.length; i++)
 		{
-			UploadedMedia mediaFile = twitter.uploadMedia(Utils.downloadImageFrom(discordMessage.getAttachments().get(i)));
+			UploadedMedia mediaFile = twitter.uploadMedia(Utils.downloadImageFrom(attachments[i]));
 			imageIDs[i] = mediaFile.getMediaId();
 		}
 		
@@ -76,14 +81,14 @@ public class TwitterManager {
 
 		Status tweet = twitter.updateStatus(statusUpdate);
 		
-		IMessage tweetDMessage = Utils.sendMessageWithEmbed(channel, "Successfully posted new tweet!", TwitterManager.getFormattedEmbed(twitter, tweet).build());
-		Geffy.getReferences().addFollowedTweet(tweetDMessage.getLongID(), user, tweet);
+		Message tweetDMessage = Utils.sendMessageWithEmbed(channel, "Successfully posted new tweet!", TwitterManager.getFormattedEmbed(twitter, tweet).build());
+		Geffy.getReferences().addFollowedTweet(tweetDMessage.getId().asLong(), user, tweet);
 
-		tweetDMessage.addReaction(":repeat:");
+		tweetDMessage.addReaction(ReactionEmoji.unicode(":repeat:"));
 		Thread.sleep(200);
-		tweetDMessage.addReaction("❤");
+		tweetDMessage.addReaction(ReactionEmoji.unicode("â�¤"));
 		Thread.sleep(200);
-		tweetDMessage.addReaction("🗑");	
+		tweetDMessage.addReaction(ReactionEmoji.unicode("ðŸ—‘"));	
 		
 		return tweet;
 	}
@@ -98,7 +103,7 @@ public class TwitterManager {
 
 	 * @throws TwitterException If any problems occur during the retweeting process.
 	 */
-	public static Status retweetTweet(Status status, IMessage message, IUser user) throws TwitterException
+	public static Status retweetTweet(Status status, Message message, User user) throws TwitterException
 	{
 		Status retweet = Geffy.getReferences().getTwitterInstanceForUser(user).getTwitterInstance().retweetStatus(status.getId());
 		Geffy.getReferences().getTwitterInstanceForUser(user).addRetweetedTweet(message, retweet);
@@ -115,11 +120,11 @@ public class TwitterManager {
 
 	 * @throws TwitterException If any problems occur during the unretweeting process.
 	 */
-	public static Status unretweetTweet(IMessage message, IUser user) throws TwitterException
+	public static Status unretweetTweet(Message message, User user) throws TwitterException
 	{
-		if(Geffy.getReferences().getTwitterInstanceForUser(user).getRetweetedTweets().containsKey(message.getLongID()))
+		if(Geffy.getReferences().getTwitterInstanceForUser(user).getRetweetedTweets().containsKey(message.getId()))
 		{
-			Status rtToBeDeleted = Geffy.getReferences().getTwitterInstanceForUser(user).getRetweetedTweets().get(message.getLongID());
+			Status rtToBeDeleted = Geffy.getReferences().getTwitterInstanceForUser(user).getRetweetedTweets().get(message.getId());
 			return Geffy.getReferences().getTwitterInstanceForUser(user).getTwitterInstance().destroyStatus(rtToBeDeleted.getId());
 		}
 		
@@ -136,7 +141,7 @@ public class TwitterManager {
 
 	 * @throws TwitterException If any problems occur during the favoriting process.
 	 */
-	public static Status favoriteTweet(Status status, IMessage message, IUser user) throws TwitterException
+	public static Status favoriteTweet(Status status, Message message, User user) throws TwitterException
 	{
 		return Geffy.getReferences().getTwitterInstanceForUser(user).getTwitterInstance().createFavorite(status.getId());
 	}
@@ -151,7 +156,7 @@ public class TwitterManager {
 
 	 * @throws TwitterException If any problems occur during the unfavoriting process.
 	 */
-	public static Status unfavoriteTweet(Status status, IMessage message, IUser user) throws TwitterException
+	public static Status unfavoriteTweet(Status status, Message message, User user) throws TwitterException
 	{
 		return Geffy.getReferences().getTwitterInstanceForUser(user).getTwitterInstance().destroyFavorite(status.getId());
 	}
@@ -166,7 +171,7 @@ public class TwitterManager {
 
 	 * @throws TwitterException If any problems occur while deleting the tweet.
 	 */
-	public static Status deleteTweet(Status status, IMessage message, IUser user) throws TwitterException
+	public static Status deleteTweet(Status status, Message message, User user) throws TwitterException
 	{
 		return Geffy.getReferences().getTwitterInstanceForUser(user).getTwitterInstance().destroyStatus(status.getId());
 	}
@@ -175,7 +180,7 @@ public class TwitterManager {
 	 * Prompts the user to authenticate themselves using Twitter's API, and waits for their response.
 	 * @param user The user to authenticate.
 	 */
-	public static void authenticateUser(IUser user)
+	public static void authenticateUser(User user)
 	{
 		Geffy.getReferences().setPromptForUser(new PromptTwitterPIN("In order to use this command, please login to Twitter using the following link, and reply with the PIN given:", user));
 		Geffy.getReferences().createTwitterInstanceForUser(user);

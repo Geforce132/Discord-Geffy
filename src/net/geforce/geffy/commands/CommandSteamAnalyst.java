@@ -8,17 +8,18 @@ import java.io.PrintWriter;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 
+import discord4j.core.event.domain.message.MessageCreateEvent;
 import net.geforce.geffy.commands.sa.SAResourceManager;
 import net.geforce.geffy.main.Utils;
 import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
 import sx.blah.discord.util.EmbedBuilder;
 
-public class CommandSteamAnalyst extends Command<MessageReceivedEvent> {
+public class CommandSteamAnalyst extends Command<MessageCreateEvent> {
 
 	@Override
-	public void execute(MessageReceivedEvent event, String[] args) throws Exception {
+	public void execute(MessageCreateEvent event, String[] args) throws Exception {
 		if(args.length <= 0) {
-			Utils.sendMessage(event.getChannel(), "You must include a Steam Analyst link!");
+			Utils.sendMessage(event.getMessage().getChannel().block(), "You must include a Steam Analyst link!");
 			return;
 		}
 				

@@ -1,6 +1,6 @@
 package net.geforce.geffy.commands.twitter;
 
-import sx.blah.discord.handle.obj.IUser;
+import discord4j.core.object.entity.User;
 import twitter4j.Status;
 
 /**
@@ -14,14 +14,14 @@ public class Tweet {
 	/**
 	 * The author of the tweet.
 	 */
-	private IUser author;
+	private User author;
 	
 	/**
 	 * The tweet itself.
 	 */
 	private Status status;
 	
-	public Tweet(IUser user, Status tweet)
+	public Tweet(User user, Status tweet)
 	{
 		author = user;
 		status = tweet;
@@ -30,7 +30,7 @@ public class Tweet {
 	/**
 	 * @return The author of this tweet.
 	 */
-	public IUser getAuthor()
+	public User getAuthor()
 	{
 		return author;
 	}

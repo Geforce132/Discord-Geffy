@@ -1,13 +1,13 @@
 package net.geforce.geffy.commands;
 
+import discord4j.core.event.domain.message.MessageCreateEvent;
+import discord4j.core.object.entity.User;
 import net.geforce.geffy.main.Utils;
-import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
-import sx.blah.discord.handle.obj.IUser;
 
-public class CommandGiveCookie extends Command<MessageReceivedEvent>{
+public class CommandGiveCookie extends Command<MessageCreateEvent>{
 	
 	@Override
-	public void execute(MessageReceivedEvent event, String[] args)
+	public void execute(MessageCreateEvent event, String[] args)
 	{
 		String mention = "Stranger";
 		try {

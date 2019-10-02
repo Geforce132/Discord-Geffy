@@ -1,9 +1,8 @@
 package net.geforce.geffy.commands;
 
-import sx.blah.discord.api.events.Event;
-import sx.blah.discord.handle.obj.IChannel;
-import sx.blah.discord.handle.obj.IReaction;
-import sx.blah.discord.handle.obj.IUser;
+import discord4j.core.object.entity.Message;
+import discord4j.core.object.entity.User;
+import discord4j.core.object.reaction.ReactionEmoji;
 
 /**
  * An abstract class which acts as the base for all of Geffy's commands. Contains required
@@ -13,7 +12,7 @@ import sx.blah.discord.handle.obj.IUser;
  *
  * @param <M> The class of the Event that the command will respond to. Usually MessageReceivedEvent.
  */
-public abstract class Command<M extends Event> {
+public abstract class Command<M> {
 	
 	/**
 	 * Runs whenever the event occurs.
@@ -24,9 +23,9 @@ public abstract class Command<M extends Event> {
 	 */
 	public abstract void execute(M event, String[] args) throws Exception;
 	
-	public void reactionAdded(IReaction reaction, IUser user, IChannel channel) {}
+	public void reactionAdded(ReactionEmoji reaction, User user, Message message) {}
 	
-	public void reactionRemoved(IReaction reaction, IUser user, IChannel channel) {}
+	public void reactionRemoved(ReactionEmoji reaction, User user, Message message) {}
 
 	public boolean reactsToReactions()
 	{

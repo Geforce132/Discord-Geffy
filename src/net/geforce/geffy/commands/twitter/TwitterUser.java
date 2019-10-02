@@ -3,10 +3,10 @@ package net.geforce.geffy.commands.twitter;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import discord4j.core.object.entity.Message;
+import discord4j.core.object.entity.User;
 import net.geforce.geffy.interactions.PromptTwitterPIN;
 import net.geforce.geffy.misc.Passwords;
-import sx.blah.discord.handle.obj.IMessage;
-import sx.blah.discord.handle.obj.IUser;
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -25,7 +25,7 @@ public class TwitterUser {
 	/**
 	 * The {@link IUser} object of this Twitter instance.
 	 */
-	private IUser user;
+	private User user;
 	
 	/**
 	 * The {@link Twitter} instance of this user.
@@ -55,7 +55,7 @@ public class TwitterUser {
 	 */
 	private ArrayList<Status> followedTweets = new ArrayList<Status>();
 	
-	public TwitterUser(IUser iuser)
+	public TwitterUser(User iuser)
 	{
 		user = iuser;
 	}
@@ -97,11 +97,11 @@ public class TwitterUser {
 	/**
 	 * @return The {@link IUser} object of this user.
 	 */
-	public IUser getUser() {
+	public User getUser() {
 		return user;
 	}
 
-	public void setUser(IUser user) {
+	public void setUser(User user) {
 		this.user = user;
 	}
 	
@@ -125,12 +125,12 @@ public class TwitterUser {
 		return retweetedTweets;
 	}
 	
-	public void addRetweetedTweet(IMessage message, Status tweet) {
-		retweetedTweets.put(message.getLongID(), tweet);
+	public void addRetweetedTweet(Message message, Status tweet) {
+		retweetedTweets.put(message.getId().asLong(), tweet);
 	}
 	
-	public void removeRetweetedTweet(IMessage message) {
-		retweetedTweets.remove(message.getLongID());
+	public void removeRetweetedTweet(Message message) {
+		retweetedTweets.remove(message.getId());
 	}
 	
 	public void setRequestToken(RequestToken token) {

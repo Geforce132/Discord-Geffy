@@ -3,13 +3,13 @@ package net.geforce.geffy.misc;
 import java.util.HashMap;
 import java.util.Set;
 
+import discord4j.core.object.entity.Message;
+import discord4j.core.object.entity.User;
 import net.geforce.geffy.commands.twitter.Tweet;
 import net.geforce.geffy.commands.twitter.TwitterUser;
 import net.geforce.geffy.interactions.Prompt;
 import net.geforce.geffy.interactions.Prompt.PromptType;
 import net.geforce.geffy.main.Utils;
-import sx.blah.discord.handle.obj.IMessage;
-import sx.blah.discord.handle.obj.IUser;
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -23,12 +23,12 @@ public class References {
 	private HashMap<String, Scoreboard> scoreboards = new HashMap<String, Scoreboard>();
 	
 	// Actively running prompts
-	private HashMap<IUser, Prompt> activePrompts = new HashMap<IUser, Prompt>();
+	private HashMap<User, Prompt> activePrompts = new HashMap<User, Prompt>();
 	
 	// HashMaps used for the ~tweet command
-	private HashMap<IUser, TwitterUser> twitterUsers = new HashMap<IUser, TwitterUser>();
+	private HashMap<User, TwitterUser> twitterUsers = new HashMap<User, TwitterUser>();
 	private HashMap<Long, Tweet> tweetsFollowedByGeffy = new HashMap<Long, Tweet>();
-	private HashMap<IUser, IMessage> usersLastMessage = new HashMap<IUser, IMessage>();
+	private HashMap<User, Message> usersLastMessage = new HashMap<User, Message>();
 
 	
 	public boolean createNewScoreboard(String sbName)
@@ -58,27 +58,27 @@ public class References {
 		activePrompts.put(prompt.getPromptedUser(), prompt);
 	}
 	
-	public Prompt getPromptForUser(IUser user)
+	public Prompt getPromptForUser(User user)
 	{
 		return activePrompts.get(user);
 	}
 	
-	public Set<IUser> getPromptedUsers()
+	public Set<User> getPromptedUsers()
 	{
 		return activePrompts.keySet();
 	}
 	
-	public boolean isUserAwaitingPrompt(IUser user)
+	public boolean isUserAwaitingPrompt(User user)
 	{
 		return activePrompts.containsKey(user);
 	}
 	
-	public void removePromptForUser(IUser user)
+	public void removePromptForUser(User user)
 	{
 		activePrompts.remove(user);
 	}
 	
-	public void createTwitterInstanceForUser(IUser user) 
+	public void createTwitterInstanceForUser(User user) 
 	{		
 		TwitterUser tu = new TwitterUser(user);
 		
@@ -95,21 +95,21 @@ public class References {
 		twitterUsers.put(user, tu);
 	}
 
-	public TwitterUser getTwitterInstanceForUser(IUser user)
+	public TwitterUser getTwitterInstanceForUser(User user)
 	{
 		if(!twitterUsers.containsKey(user)) return null;
 		
 		return twitterUsers.get(user);
 	}
 	
-	public TwitterUser getTwitterAuthenticatorForUser(IUser user)
+	public TwitterUser getTwitterAuthenticatorForUser(User user)
 	{
 		if(!twitterUsers.containsKey(user)) return null;
 		
 		return twitterUsers.get(user);
 	}
 	
-	public void addFollowedTweet(long messageID, IUser user, Status tweet)
+	public void addFollowedTweet(long messageID, User user, Status tweet)
 	{		
 		tweetsFollowedByGeffy.put(messageID, new Tweet(user, tweet));
 	}
@@ -121,12 +121,12 @@ public class References {
 		return tweetsFollowedByGeffy.get(message);
 	}
 	
-	public void setLastMessage(IUser user, IMessage message)
+	public void setLastMessage(User user, Message message)
 	{
 		usersLastMessage.put(user, message);
 	}
 	
-	public IMessage getLastMessage(IUser user)
+	public Message getLastMessage(User user)
 	{
 		return usersLastMessage.get(user);
 	}

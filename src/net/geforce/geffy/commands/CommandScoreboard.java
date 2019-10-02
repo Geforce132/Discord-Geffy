@@ -1,17 +1,17 @@
 package net.geforce.geffy.commands;
 
+import discord4j.core.event.domain.message.MessageCreateEvent;
+import discord4j.core.object.entity.User;
 import net.geforce.geffy.main.Geffy;
 import net.geforce.geffy.main.Utils;
-import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
-import sx.blah.discord.handle.obj.IUser;
 
-public class CommandScoreboard extends Command<MessageReceivedEvent> {
+public class CommandScoreboard extends Command<MessageCreateEvent> {
 
 	@Override
-	public void execute(MessageReceivedEvent event, String[] args) throws Exception {
+	public void execute(MessageCreateEvent event, String[] args) throws Exception {
 		if(args.length < 0)
 		{
-			Utils.sendMessage(event.getChannel(), "Missing arguments!");
+			Utils.sendMessage(event.getMessage().getChannel().block(), "Missing arguments!");
 		}
 		
 		if(args.length >= 2)
@@ -22,7 +22,7 @@ public class CommandScoreboard extends Command<MessageReceivedEvent> {
 				System.out.println("Creating new scoreboard named " + sbName + "!");
 				if(Geffy.getReferences().createNewScoreboard(sbName))
 				{
-					Utils.sendMessage(event.getChannel(), "New scoreboard named " + Utils.arrayToString(args, 1) + " created!");
+					Utils.sendMessage(event.getMessage().getChannel().block(), "New scoreboard named " + Utils.arrayToString(args, 1) + " created!");
 				}
 				
 				return;
@@ -37,17 +37,17 @@ public class CommandScoreboard extends Command<MessageReceivedEvent> {
 				{
 					if(Geffy.getReferences().getScoreboard(args[1]) == null)
 					{
-						Utils.sendMessage(event.getChannel(), "There is no scoreboard named " + args[1] + "!");
+						Utils.sendMessage(event.getMessage().getChannel().block(), "There is no scoreboard named " + args[1] + "!");
 						return;
 					}
 					
 					//System.out.println(args[i]);
-					IUser user = Utils.getUserByName(event.getChannel(), args[i]);
+					User user = Utils.getUserByName(event.getMessage().getChannel().block(), args[i]);
 					
 					if(user != null)
 					{
 						Geffy.getReferences().getScoreboard(args[1]).addUser(user);
-						Utils.sendMessage(event.getChannel(), "Successfully added " + Utils.arrayToString(args, 2) + " to the scoreboard!");
+						Utils.sendMessage(event.getMessage().getChannel().block(), "Successfully added " + Utils.arrayToString(args, 2) + " to the scoreboard!");
 						return;
 					}
 				}
